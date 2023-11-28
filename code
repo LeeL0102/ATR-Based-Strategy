@@ -1,0 +1,23 @@
+//@version=5
+strategy("ATR Based Strategy", overlay=true, default_qty_type=strategy.percent_of_equity, default_qty_value=10)
+
+// ATR 参数
+atrLength = input.int(14, title="ATR Length")
+multiplier = input.float(2.0, title="ATR Multiplier")
+
+// 计算 ATR
+atr = ta.atr(atrLength)
+
+// 定义买入和卖出条件
+longCondition = close > ta.highest(close, atrLength) - atr * multiplier
+shortCondition = close < ta.lowest(close, atrLength) + atr * multiplier
+
+// 执行策略
+if (longCondition)
+    strategy.entry("Long", strategy.long)
+
+if (shortCondition)
+    strategy.close("Long")
+
+// 绘制
+plot(series=atr, title="ATR", color=color.red)
